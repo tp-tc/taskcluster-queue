@@ -218,3 +218,29 @@ load-test:
     env:              development
     forceSSL:         true
     trustProxy:       true
+
+
+heroku-deploy:
+  app:
+    publicArtifactBucket:         'taskcluster-public-artifacts'
+    privateArtifactBucket:        'taskcluster-private-artifacts'
+    artifactContainer:            'artifacts'
+    taskTableName:                'QueueTasks'
+    artifactTableName:            'QueueArtifacts'
+    taskGroupTableName:           'QueueTaskGroups'
+    taskGroupMemberTableName:     'QueueTaskGroupMembers'
+    taskGroupActiveSetTableName:  'QueueTaskGroupActiveSets'
+    taskRequirementTableName:     'QueueTaskRequirement'
+    taskDependencyTableName:      'QueueTaskDependency'
+    cloudMirrorRegions:
+      - us-east-1
+    useCloudMirror: !env:bool USE_PUBLIC_ARTIFACT_BUCKET_PROXY
+  taskcluster:
+    authBaseUrl:      https://auth.tc.hocat.ca/v1
+  server:
+    publicUrl:        https://queue.tc.hocat.ca
+    env:              development
+    forceSSL:         true
+    trustProxy:       true
+  monitor:
+    mock:             false
