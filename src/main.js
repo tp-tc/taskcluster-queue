@@ -44,18 +44,6 @@ let load = base.loader({
       aws:           cfg.aws,
     }),
   },
-  publisher: {
-    requires: ['cfg', 'validator', 'monitor'],
-    setup: ({cfg, validator, monitor}) => exchanges.setup({
-      credentials:        cfg.pulse,
-      exchangePrefix:     cfg.app.exchangePrefix,
-      validator:          validator,
-      referencePrefix:    'queue/v1/exchanges.json',
-      publish:            cfg.app.publishMetaData,
-      aws:                cfg.aws,
-      monitor:            monitor.prefix('publisher'),
-    }),
-  },
 
   // Create artifact bucket instances
   publicArtifactBucket: {
@@ -221,9 +209,8 @@ let load = base.loader({
 
   // Create workClaimer
   workClaimer: {
-    requires: ['cfg', 'publisher', 'Task', 'queueService', 'monitor'],
-    setup: ({cfg, publisher, Task, queueService, monitor}) => new WorkClaimer({
-      publisher,
+    requires: ['cfg', 'Task', 'queueService', 'monitor'],
+    setup: ({cfg, Task, queueService, monitor}) => new WorkClaimer({
       Task,
       queueService,
       monitor:        monitor.prefix('work-claimer'),
@@ -235,7 +222,7 @@ let load = base.loader({
   // Create dependencyTracker
   dependencyTracker: {
     requires: [
-      'Task', 'publisher', 'queueService', 'TaskDependency',
+      'Task', 'queueService', 'TaskDependency',
       'TaskRequirement', 'TaskGroupActiveSet',
     ],
     setup: (ctx) => new DependencyTracker(ctx),
@@ -255,7 +242,7 @@ let load = base.loader({
 
   api: {
     requires: [
-      'cfg', 'publisher', 'validator', 'Task', 'Artifact',
+      'cfg', 'validator', 'Task', 'Artifact',
       'TaskGroup', 'TaskGroupMember', 'TaskGroupActiveSet', 'queueService',
       'artifactStore', 'publicArtifactBucket', 'privateArtifactBucket',
       'regionResolver', 'monitor', 'dependencyTracker', 'TaskDependency',
@@ -271,7 +258,6 @@ let load = base.loader({
         taskGroupExpiresExtension: ctx.cfg.app.taskGroupExpiresExtension,
         TaskDependency:   ctx.TaskDependency,
         dependencyTracker: ctx.dependencyTracker,
-        publisher:        ctx.publisher,
         validator:        ctx.validator,
         claimTimeout:     ctx.cfg.app.claimTimeout,
         queueService:     ctx.queueService,
@@ -314,14 +300,14 @@ let load = base.loader({
   // Create the claim-reaper process
   'claim-reaper': {
     requires: [
-      'cfg', 'Task', 'queueService', 'publisher', 'monitor',
+      'cfg', 'Task', 'queueService', 'monitor',
       'dependencyTracker',
     ],
     setup: ({
-      cfg, Task, queueService, publisher, dependencyTracker, monitor,
+      cfg, Task, queueService, dependencyTracker, monitor,
     }) => {
       let resolver = new ClaimResolver({
-        Task, queueService, publisher, dependencyTracker,
+        Task, queueService, dependencyTracker,
         pollingDelay:   cfg.app.claim.pollingDelay,
         parallelism:    cfg.app.claim.parallelism,
         monitor:        monitor.prefix('claim-reaper'),
@@ -334,14 +320,14 @@ let load = base.loader({
   // Create the deadline reaper process
   'deadline-reaper': {
     requires: [
-      'cfg', 'Task', 'queueService', 'publisher', 'monitor',
+      'cfg', 'Task', 'queueService', 'monitor',
       'dependencyTracker',
     ],
     setup: ({
-      cfg, Task, queueService, publisher, dependencyTracker, monitor,
+      cfg, Task, queueService, dependencyTracker, monitor,
     }) => {
       let resolver = new DeadlineResolver({
-        Task, queueService, publisher, dependencyTracker,
+        Task, queueService, dependencyTracker,
         pollingDelay:   cfg.app.deadline.pollingDelay,
         parallelism:    cfg.app.deadline.parallelism,
         monitor:        monitor.prefix('deadline-reaper'),

@@ -113,7 +113,6 @@ var api = new base.API({
     'publicBucket',       // bucket instance for public artifacts
     'privateBucket',      // bucket instance for private artifacts
     'blobStore',          // BlobStore for azure artifacts
-    'publisher',          // publisher from base.Exchanges
     'validator',          // base.validator
     'claimTimeout',       // Number of seconds before a claim expires
     'queueService',       // Azure QueueService object from queueservice.js
@@ -700,7 +699,6 @@ api.declare({
 
   // Publish task-defined message, we want this arriving before the
   // task-pending message, so we have to await publication here
-  await this.publisher.taskDefined({status}, task.routes);
 
   // If first run is pending we publish messages about this
   if (runZeroState === 'pending') {
@@ -709,7 +707,6 @@ api.declare({
       this.queueService.putPendingMessage(task, 0),
 
       // Put message in appropriate azure queue, and publish message to pulse
-      this.publisher.taskPending({status, runId: 0}, task.routes),
     ]);
   }
 
@@ -894,7 +891,6 @@ api.declare({
   }
 
   // Publish task-defined message
-  await this.publisher.taskDefined({status}, task.routes);
 
   // Reply
   return res.reply({status});
@@ -1095,10 +1091,6 @@ api.declare({
     var runId = task.runs.length - 1;
     await Promise.all([
       this.queueService.putPendingMessage(task, runId),
-      this.publisher.taskPending({
-        status:         status,
-        runId:          runId,
-      }, task.routes),
     ]);
   }
 
@@ -1227,10 +1219,6 @@ api.declare({
     );
 
     // Publish message about the exception
-    await this.publisher.taskException(_.defaults({
-      status,
-      runId: task.runs.length - 1,
-    }, _.pick(run, 'workerGroup', 'workerId')), task.routes);
   }
 
   return res.reply({status});
@@ -1657,23 +1645,6 @@ var resolveTask = async function(req, res, taskId, runId, target) {
   // Construct status object
   var status = task.status();
 
-  // Post message about task resolution
-  if (target === 'completed') {
-    await this.publisher.taskCompleted({
-      status,
-      runId,
-      workerGroup:  run.workerGroup,
-      workerId:     run.workerId,
-    }, task.routes);
-  } else {
-    await this.publisher.taskFailed({
-      status,
-      runId,
-      workerGroup:  run.workerGroup,
-      workerId:     run.workerId,
-    }, task.routes);
-  }
-
   return res.reply({status});
 };
 
@@ -1883,10 +1854,6 @@ api.declare({
        newRun.reasonCreated  === 'task-retry')) {
     await Promise.all([
       this.queueService.putPendingMessage(task, runId + 1),
-      this.publisher.taskPending({
-        status,
-        runId:          runId + 1,
-      }, task.routes),
     ]);
   } else {
     // Update dependency tracker, as the task is resolved (no new run)
@@ -1898,12 +1865,6 @@ api.declare({
     );
 
     // Publish message about taskException
-    await this.publisher.taskException({
-      status,
-      runId,
-      workerGroup:  run.workerGroup,
-      workerId:     run.workerId,
-    }, task.routes);
   }
 
   // Reply to caller

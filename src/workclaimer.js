@@ -125,7 +125,6 @@ class WorkClaimer extends events.EventEmitter {
    */
   constructor(options) {
     assert(options);
-    assert(options.publisher);
     assert(options.Task);
     assert(options.queueService);
     assert(options.monitor);
@@ -133,7 +132,6 @@ class WorkClaimer extends events.EventEmitter {
     assert(options.credentials);
     super();
     this._monitor = options.monitor;
-    this._publisher = options.publisher;
     this._Task = options.Task;
     this._queueService = options.queueService;
     this._claimTimeout = options.claimTimeout;
@@ -263,13 +261,6 @@ class WorkClaimer extends events.EventEmitter {
 
     // Publish task running message, it's important that we publish even if this
     // is a retry request and we didn't make any changes in task.modify
-    await this._publisher.taskRunning({
-      status:       status,
-      runId:        runId,
-      workerGroup:  workerGroup,
-      workerId:     workerId,
-      takenUntil:   run.takenUntil,
-    }, task.routes);
 
     // Create temporary credentials for the task
     let credentials = taskcluster.createTemporaryCredentials({

@@ -24,7 +24,6 @@ class DependencyTracker {
     // Validate options
     assert(options,                    'options are required');
     assert(options.Task,               'Expected options.Task');
-    assert(options.publisher,          'Expected options.publisher');
     assert(options.queueService,       'Expected options.queueService');
     assert(options.TaskDependency,     'Expected options.TaskDependency');
     assert(options.TaskRequirement,    'Expected options.TaskRequirement');
@@ -32,7 +31,6 @@ class DependencyTracker {
 
     // Store options on this object
     this.Task               = options.Task;
-    this.publisher          = options.publisher;
     this.queueService       = options.queueService;
     this.TaskDependency     = options.TaskDependency;
     this.TaskRequirement    = options.TaskRequirement;
@@ -303,12 +301,6 @@ class DependencyTracker {
       throw err;
     }
 
-    if (result.entries.length == 0) {
-      await this.publisher.taskGroupResolved({
-        taskGroupId,
-        schedulerId,
-      }, []);
-    }
   }
 
   /**
@@ -361,10 +353,6 @@ class DependencyTracker {
     if (task.runs[0].state === 'pending') {
       await Promise.all([
         this.queueService.putPendingMessage(task, 0),
-        this.publisher.taskPending({
-          status:         status,
-          runId:          0,
-        }, task.routes),
       ]);
     }
 

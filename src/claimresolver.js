@@ -51,7 +51,6 @@ class ClaimResolver {
     assert(options.queueService instanceof QueueService,
            'Expected instance of QueueService');
     assert(options.dependencyTracker, 'Expected a DependencyTracker instance');
-    assert(options.publisher, 'Expected a publisher');
     assert(typeof options.pollingDelay === 'number',
            'Expected pollingDelay to be a number');
     assert(typeof options.parallelism === 'number',
@@ -60,7 +59,6 @@ class ClaimResolver {
     this.Task               = options.Task;
     this.queueService       = options.queueService;
     this.dependencyTracker  = options.dependencyTracker;
-    this.publisher          = options.publisher;
     this.pollingDelay       = options.pollingDelay;
     this.parallelism        = options.parallelism;
     this.monitor            = options.monitor;
@@ -246,22 +244,12 @@ class ClaimResolver {
         newRun.reasonCreated  === 'retry') {
       await Promise.all([
         this.queueService.putPendingMessage(task, runId + 1),
-        this.publisher.taskPending({
-          status:         status,
-          runId:          runId + 1,
-        }, task.routes),
       ]);
     } else {
       // Update dependencyTracker
       await this.dependencyTracker.resolveTask(taskId, task.taskGroupId, task.schedulerId, 'exception');
 
       // Publish message about task exception
-      await this.publisher.taskException({
-        status:       status,
-        runId:        runId,
-        workerGroup:  run.workerGroup,
-        workerId:     run.workerId,
-      }, task.routes);
     }
 
     return remove();

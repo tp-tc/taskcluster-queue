@@ -53,7 +53,6 @@ class DeadlineResolver {
     assert(options.queueService instanceof QueueService,
            'Expected instance of QueueService');
     assert(options.dependencyTracker, 'Expected a DependencyTracker instance');
-    assert(options.publisher, 'Expected a publisher');
     assert(typeof options.pollingDelay === 'number',
            'Expected pollingDelay to be a number');
     assert(typeof options.parallelism === 'number',
@@ -62,7 +61,6 @@ class DeadlineResolver {
     this.Task               = options.Task;
     this.queueService       = options.queueService;
     this.dependencyTracker  = options.dependencyTracker;
-    this.publisher          = options.publisher;
     this.pollingDelay       = options.pollingDelay;
     this.parallelism        = options.parallelism;
     this.monitor            = options.monitor;
@@ -221,10 +219,6 @@ class DeadlineResolver {
       await this.dependencyTracker.resolveTask(taskId, task.taskGroupId, task.schedulerId, 'exception');
 
       // Publish messages about the last run
-      await this.publisher.taskException({
-        status:   task.status(),
-        runId:    task.runs.length - 1,
-      }, task.routes);
     }
 
     return remove();

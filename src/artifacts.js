@@ -273,14 +273,6 @@ api.declare({
   }
 
   // Publish message about artifact creation
-  await this.publisher.artifactCreated({
-    status:         task.status(),
-    artifact:       artifact.json(),
-    workerGroup,
-    workerId,
-    runId,
-  }, task.routes);
-
   switch (artifact.storageType) {
     case 's3':
       // Reply with signed S3 URL
