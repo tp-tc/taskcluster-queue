@@ -33,6 +33,7 @@ let load = base.loader({
       credentials: cfg.taskcluster.credentials,
       mock: cfg.monitor.mock,
       process,
+      baseDomain: cfg.taskcluster.baseDomain,
     }),
   },
 

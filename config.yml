@@ -237,6 +237,7 @@ heroku-deploy:
     useCloudMirror: !env:bool USE_PUBLIC_ARTIFACT_BUCKET_PROXY
   taskcluster:
     authBaseUrl:      https://auth.tc.hocat.ca/v1
+    baseDomain:       tc.hocat.ca
   server:
     publicUrl:        https://queue.tc.hocat.ca
     env:              development
