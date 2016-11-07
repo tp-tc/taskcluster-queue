@@ -222,8 +222,6 @@ load-test:
 
 heroku-deploy:
   app:
-    publicArtifactBucket:         'taskcluster-public-artifacts'
-    privateArtifactBucket:        'taskcluster-private-artifacts'
     artifactContainer:            'artifacts'
     taskTableName:                'QueueTasks'
     artifactTableName:            'QueueArtifacts'
@@ -232,9 +230,6 @@ heroku-deploy:
     taskGroupActiveSetTableName:  'QueueTaskGroupActiveSets'
     taskRequirementTableName:     'QueueTaskRequirement'
     taskDependencyTableName:      'QueueTaskDependency'
-    cloudMirrorRegions:
-      - us-east-1
-    useCloudMirror: !env:bool USE_PUBLIC_ARTIFACT_BUCKET_PROXY
   taskcluster:
     authBaseUrl:      https://auth.tc.hocat.ca/v1
     baseDomain:       tc.hocat.ca
