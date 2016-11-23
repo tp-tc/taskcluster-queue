@@ -2382,7 +2382,7 @@
     "taskcluster-base": {
       "version": "6.2.0",
       "from": "git+https://github.com/tp-tc/taskcluster-base.git#master",
-      "resolved": "git+https://github.com/tp-tc/taskcluster-base.git#3b37bc1362edc04ef968716c7a893d67f0d0699f",
+      "resolved": "git+https://github.com/tp-tc/taskcluster-base.git#ad18dd7813d2753f6276ebc8bea1358f81eae512",
       "dependencies": {
         "boom": {
           "version": "2.10.1",
@@ -2457,7 +2457,7 @@
         "taskcluster-client": {
           "version": "1.5.0",
           "from": "git+https://github.com/tp-tc/taskcluster-client.git",
-          "resolved": "git+https://github.com/tp-tc/taskcluster-client.git#b8cc2f738274dc25b7cd1113377253de63a9f770",
+          "resolved": "git+https://github.com/tp-tc/taskcluster-client.git#068bb9b515c4144fa9f21dada55ff1e360ec06e7",
           "dependencies": {
             "lodash": {
               "version": "3.10.1",
@@ -2551,9 +2551,9 @@
       }
     },
     "taskcluster-lib-api": {
-      "version": "1.3.2",
-      "from": "taskcluster-lib-api@>=1.1.0 <2.0.0",
-      "resolved": "https://registry.npmjs.org/taskcluster-lib-api/-/taskcluster-lib-api-1.3.2.tgz",
+      "version": "3.0.1",
+      "from": "git+https://github.com/tp-tc/taskcluster-lib-api.git",
+      "resolved": "git+https://github.com/tp-tc/taskcluster-lib-api.git#1843e7b3f5debda5ec98bc491c71aa13dad73243",
       "dependencies": {
         "accepts": {
           "version": "1.1.4",
@@ -3546,7 +3546,7 @@
     "taskcluster-lib-monitor": {
       "version": "4.3.2",
       "from": "git+https://github.com/tp-tc/taskcluster-lib-monitor.git",
-      "resolved": "git+https://github.com/tp-tc/taskcluster-lib-monitor.git#e0a835ef28e6051c63236c2a6120a45edb842915",
+      "resolved": "git+https://github.com/tp-tc/taskcluster-lib-monitor.git#a77b5519b9d3733fe5c0b3f747cad0dce680d292",
       "dependencies": {
         "boom": {
           "version": "2.10.1",
@@ -3621,7 +3621,7 @@
         "taskcluster-client": {
           "version": "1.5.0",
           "from": "git+https://github.com/tp-tc/taskcluster-client.git",
-          "resolved": "git+https://github.com/tp-tc/taskcluster-client.git#b8cc2f738274dc25b7cd1113377253de63a9f770",
+          "resolved": "git+https://github.com/tp-tc/taskcluster-client.git#068bb9b515c4144fa9f21dada55ff1e360ec06e7",
           "dependencies": {
             "lodash": {
               "version": "3.10.1",
